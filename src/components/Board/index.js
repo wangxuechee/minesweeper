@@ -1,35 +1,38 @@
-import React from "react";
+import React, { Component } from "react";
 import PropTypes from "prop-types";
 import Cell from "../Cell";
+import { GameContext } from "../Game"; // 引入 GameContext
 import "./style.css";
 
-class Board extends React.Component {
+class Board extends Component {
+  static contextType = GameContext; // 使用 GameContext
+
   state = {
     ...this.getInitialState(),
     isFirstClick: true, // 标记是否为首次点击
   };
 
   getInitialState() {
+    const { mines, gameStatus, width, height } = this.context; // 从 context 获取相关设置
     return {
       grid: this.createNewBoard(),
-      minesCount: this.props.mines,
-      gameStatus: this.props.gameStatus,
+      minesCount: mines,
+      gameStatus: gameStatus,
       revealedCells: 0,
+      width,
+      height,
     };
   }
 
-  // 创建新的地雷布局
   createNewBoard(click = null) {
     const grid = [];
-    const rows = this.props.width;
-    const columns = this.props.height;
-    const minesCount = this.props.mines;
-    const minesArray = this.getRandomMines(minesCount, columns, rows, click);
+    const { width, height, mines } = this.context; // 从 context 获取设置
+    const minesArray = this.getRandomMines(mines, width, height, click);
 
-    for (let i = 0; i < columns; ++i) {
+    for (let i = 0; i < height; ++i) {
       grid.push([]);
-      for (let j = 0; j < rows; ++j) {
-        const gridCell = new GridCell(i, j, minesArray.includes(i * rows + j));
+      for (let j = 0; j < width; ++j) {
+        const gridCell = new GridCell(i, j, minesArray.includes(i * width + j));
         this.addGridCell(grid, gridCell);
       }
     }
@@ -37,13 +40,11 @@ class Board extends React.Component {
     return grid;
   }
 
-  // 随机生成地雷位置，排除首次点击位置
   getRandomMines(amount, columns, rows, starter = null) {
     const minesArray = [];
     const limit = columns * rows;
     const minesPool = [...Array(limit).keys()];
 
-    // 如果指定了首次点击位置，则排除该位置
     if (starter !== null && starter >= 0 && starter < limit) {
       minesPool.splice(starter, 1);
     }
@@ -56,7 +57,6 @@ class Board extends React.Component {
     return minesArray;
   }
 
-  // 将新生成的 GridCell 添加到网格中
   addGridCell(grid, gridCell) {
     const y = grid.length - 1;
     const x = grid[y].length;
@@ -74,7 +74,6 @@ class Board extends React.Component {
     grid[y].push(gridCell);
   }
 
-  // 显示整个地雷布局
   revealBoard() {
     const grid = this.state.grid;
     for (const row of grid) {
@@ -85,15 +84,13 @@ class Board extends React.Component {
     this.setState({});
   }
 
-  // 重置游戏板
   restartBoard() {
     this.setState({
       ...this.getInitialState(),
-      isFirstClick: true, // 重置首次点击标记
+      isFirstClick: true,
     });
   }
 
-  /* 辅助方法 */
   getNeighbours(grid, y, x) {
     const neighbours = [];
     const currentRow = grid[y];
@@ -135,7 +132,7 @@ class Board extends React.Component {
   }
 
   checkVictory() {
-    const { height, width, mines } = this.props;
+    const { width, height, mines } = this.context;
     const revealed = this.getRevealed();
     if (revealed >= height * width - mines) {
       this.killBoard("win");
@@ -156,34 +153,28 @@ class Board extends React.Component {
     const message = type === "lost" ? "Game over! You lost!" : "Game over! You won!";
     this.setState({ gameStatus: message }, () => {
       this.revealBoard();
-      if (this.props.onGameEnd) {
-        this.props.onGameEnd(message);
+      if (this.context.setGameStatus) {
+        this.context.setGameStatus(message);
       }
     });
   }
 
-  // 左键点击处理
   handleLeftClick(y, x) {
     const grid = this.state.grid;
     const gridCell = grid[y][x];
-  
-    // 确保首次点击不在地雷上
     if (this.state.isFirstClick) {
       if (gridCell.isMine) {
-        // 重新生成地雷布局并确保首次点击安全
         this.setState({
-          grid: this.createNewBoard(y * this.props.width + x),
+          grid: this.createNewBoard(y * this.context.width + x),
           isFirstClick: false,
         }, () => {
-          // 在新布局上模拟再次点击，确保首次点击生效
           this.handleLeftClick(y, x);
         });
         return;
       }
       this.setState({ isFirstClick: false });
     }
-  
-    // 处理正常点击
+
     gridCell.isClicked = true;
     if (gridCell.isRevealed || gridCell.isFlagged) return false;
     if (gridCell.isMine) {
@@ -193,16 +184,15 @@ class Board extends React.Component {
     if (gridCell.isEmpty) {
       this.revealEmptyNeighbours(grid, y, x);
     }
-  
+
     gridCell.isFlagged = false;
     gridCell.isRevealed = true;
-  
+
     this.setState({}, () => {
       this.checkVictory();
     });
   }
 
-  // 右键点击处理
   handleRightClick(e, y, x) {
     e.preventDefault();
     const grid = this.state.grid;
@@ -218,7 +208,6 @@ class Board extends React.Component {
     this.setState({ minesCount: minesLeft });
   }
 
-  // 渲染游戏板
   renderBoard() {
     const grid = this.state.grid;
     return grid.map((row) => {
@@ -265,9 +254,7 @@ class GridCell {
 
 // PropTypes 类型检查
 Board.propTypes = {
-  height: PropTypes.number,
-  width: PropTypes.number,
-  mines: PropTypes.number,
+  onGameEnd: PropTypes.func,
 };
 
 export default Board;

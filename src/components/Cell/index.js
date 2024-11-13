@@ -1,44 +1,42 @@
-import React from "react";
+import React, { useContext } from "react";
 import PropTypes from "prop-types";
+import { GameContext } from "../Game"; // 引入 GameContext
 
 import "./style.css";
 
-class Cell extends React.Component {
-  getValue() {
-    const { value } = this.props;
+const Cell = ({ value, onClick, cMenu }) => {
+  const { gameStatusMessage } = useContext(GameContext); // 获取游戏状态信息
 
+  const getValue = () => {
     if (!value.isRevealed) {
-      return this.props.value.isFlagged ? "🚩" : null;
+      return value.isFlagged ? "🚩" : null;
     } else if (value.isMine) {
       return "💣";
     } else if (value.isEmpty) {
       return "";
     }
-
     return value.n;
-  }
+  };
 
-  render() {
-    const className =
-      "cell" +
-      (this.props.value.isRevealed ? "" : " hidden") +
-      (this.props.value.isMine ? " is-mine" : "") +
-      (this.props.value.isClicked ? " is-clicked" : "") +
-      (this.props.value.isEmpty ? " is-empty" : "") +
-      (this.props.value.isUnknown ? " is-unknown" : "") +
-      (this.props.value.isFlagged ? " is-flag" : "");
+  const className =
+    "cell" +
+    (value.isRevealed ? "" : " hidden") +
+    (value.isMine ? " is-mine" : "") +
+    (value.isClicked ? " is-clicked" : "") +
+    (value.isEmpty ? " is-empty" : "") +
+    (value.isUnknown ? " is-unknown" : "") +
+    (value.isFlagged ? " is-flag" : "");
 
-    return (
-      <div
-        className={className}
-        onClick={this.props.onClick}
-        onContextMenu={this.props.cMenu}
-      >
-        {this.getValue()}
-      </div>
-    );
-  }
-}
+  return (
+    <div
+      className={className}
+      onClick={() => gameStatusMessage === "" && onClick()} // 如果游戏未结束则可以点击
+      onContextMenu={(e) => gameStatusMessage === "" && cMenu(e)} // 游戏未结束时才响应右键
+    >
+      {getValue()}
+    </div>
+  );
+};
 
 // Type checking With PropTypes
 const cellItemShape = {
@@ -51,9 +49,9 @@ const cellItemShape = {
 };
 
 Cell.propTypes = {
-  value: PropTypes.objectOf(PropTypes.shape(cellItemShape)),
-  onClick: PropTypes.func,
-  cMenu: PropTypes.func
+  value: PropTypes.shape(cellItemShape).isRequired,
+  onClick: PropTypes.func.isRequired,
+  cMenu: PropTypes.func.isRequired
 };
 
 export default Cell;

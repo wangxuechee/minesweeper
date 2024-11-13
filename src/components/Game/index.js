@@ -1,7 +1,10 @@
-import React from "react";
+import React, { createContext } from "react";
 import { useParams } from "react-router-dom";
 import Board from "../Board";
 import "./style.css";
+
+// 创建 GameContext
+export const GameContext = createContext();
 
 class Game extends React.Component {
   constructor(props) {
@@ -56,27 +59,33 @@ class Game extends React.Component {
 
   render() {
     const { height, width, mines, gameStatusMessage } = this.state;
-    return (
-      <div className="game">
-        {/* 游戏顶部的状态和重置按钮 */}
-        <header className="game-header">
-          <button onClick={this.restartGame}>Restart</button>
-          {gameStatusMessage && (
-            <div className="game-status">
-              <h2>{gameStatusMessage}</h2>
-            </div>
-          )}
-        </header>
 
-        {/* 游戏板 */}
-        <Board
-          ref={this.boardElement}
-          height={height}
-          width={width}
-          mines={mines}
-          onGameEnd={this.handleGameEnd} // 传递结束回调
-        />
-      </div>
+    return (
+      <GameContext.Provider
+        value={{
+          gameStatusMessage,
+          height,
+          width,
+          mines,
+          restartGame: this.restartGame,
+          setGameStatus: this.handleGameEnd,
+        }}
+      >
+        <div className="game">
+          {/* 游戏顶部的状态和重置按钮 */}
+          <header className="game-header">
+            <button onClick={this.restartGame}>Restart</button>
+            {gameStatusMessage && (
+              <div className="game-status">
+                <h2>{gameStatusMessage}</h2>
+              </div>
+            )}
+          </header>
+
+          {/* 游戏板 */}
+          <Board ref={this.boardElement} />
+        </div>
+      </GameContext.Provider>
     );
   }
 }
