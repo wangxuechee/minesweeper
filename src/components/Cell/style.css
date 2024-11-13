@@ -1,0 +1,60 @@
+.cell {
+  display: flex;
+  background-color: rgb(26, 138, 123);
+  min-width: 30px;
+  min-height: 30px;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 4px;
+  color: #fff;
+  font-weight: 600;
+  transition: background-color 0.2s;
+}
+
+/* Margin for cells, excluding the first cell */
+.cell:not(first-child) {
+  margin-left: 5px;
+}
+
+.cell:focus {
+  outline: none;
+}
+
+/* Unselected (Hidden) Cell */
+.cell.hidden {
+  background-color: rgb(16, 74, 78);
+}
+
+/* Hover effect for unselected cells */
+.cell.hidden:hover {
+  background-color: rgb(23, 119, 125);
+}
+
+/* Incorrectly flagged cells */
+.cell.is-flag:not(.is-mine):not(.hidden) {
+  background-color: rgb(21, 149, 154);
+}
+
+/* Correctly flagged cells */
+.cell.is-flag.is-mine:not(.hidden) {
+  background-color: #6ba871;
+}
+
+/* Clicked on a mine (Selected, bomb) */
+.cell.is-mine.is-clicked {
+  background-color: rgb(27, 175, 180);
+  content: "💣"; /* Optionally add a bomb icon */
+}
+
+/* Empty cells with no surrounding mines (Selected, safe) */
+.cell.is-empty:not(.hidden):not(.is-mine):not(.is-flagged) {
+  background-color: rgb(11, 110, 96);
+  color: #eee; /* Lighter color for text */
+}
+
+/* Numbered cells (Safe cells with surrounding mines) */
+.cell:not(.hidden):not(.is-mine):not(.is-empty) {
+  background-color: rgb(11, 110, 96);
+  color: #ddd; /* Color for numbers */
+}

@@ -1,0 +1,48 @@
+/* 主容器样式 */
+.home {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 80vh; /* 保证内容在页面中间 */
+    text-align: center;
+    padding: 20px;
+}
+
+/* 标题样式 */
+.home h1 {
+    font-size: 3rem;
+    color: #2c3e50;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+/* 欢迎信息样式 */
+.home p {
+    font-size: 1.2rem;
+    color: #4f4f4f;
+    margin-bottom: 30px;
+}
+
+/* 导航链接容器 */
+.nav-links {
+    display: flex;
+    gap: 15px; /* 链接间距 */
+}
+
+/* 导航链接样式 */
+.nav-links a {
+    text-decoration: none;
+    color: #4f87b5;
+    font-size: 1.1rem;
+    padding: 10px 20px;
+    border: 2px solid #4f87b5;
+    border-radius: 8px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+/* 悬停时导航链接样式 */
+.nav-links a:hover {
+    background-color: #4f87b5;
+    color: #ffffff;
+}

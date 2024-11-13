@@ -1,38 +1,107 @@
+/* 全局页面布局 */
 .App {
   text-align: center;
+  font-family: 'Roboto', sans-serif;
+  color: #333;
+  background: linear-gradient(to bottom right, #f7f1e3, #e8d1b7);
+  min-height: 100vh;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
+/* 标题和内容容器 */
 .App-header {
-  background-color: #282c34;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  font-size: 1.2em;
+  color: #2c2c2c;
 }
 
+/* 链接样式 */
 .App-link {
-  color: #61dafb;
+  color: #5f4b8b;
+  font-weight: bold;
+  text-decoration: none;
+  transition: color 0.3s;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+.App-link:hover {
+  color: #3e3370;
+}
+
+/* 背景动画效果 */
+@keyframes background-slide {
+  0% {
+    background-position: 0% 50%;
   }
-  to {
-    transform: rotate(360deg);
+  50% {
+    background-position: 100% 50%;
   }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* 标志动画效果 */
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+  animation: App-logo-spin infinite 10s linear;
+  filter: drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.3));
+}
+
+/* 屏幕大小调整效果 */
+@media (max-width: 768px) {
+  .App-header {
+    font-size: 1em;
+    padding: 20px;
+  }
+}
+
+@media (min-width: 768px) {
+  .App-header {
+    font-size: 1.5em;
+  }
+}
+
+@media (min-width: 1200px) {
+  .App-header {
+    font-size: 2em;
+  }
+}
+
+/* 导航栏样式 */
+.navbar {
+  background: rgba(63, 94, 251, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 15px 0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.navbar a {
+  color: #fefefe;
+  padding: 10px 20px;
+  margin: 0 10px;
+  font-size: 1em;
+  font-weight: 500;
+  text-decoration: none;
+  border-radius: 5px;
+  transition: background 0.3s, color 0.3s;
+}
+
+.navbar a:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
+/* 更改网格背景颜色 */
+.board {
+  background: #fff6e0;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 20px;
+  margin-top: 20px;
 }
